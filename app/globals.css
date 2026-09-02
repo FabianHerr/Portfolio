@@ -1,0 +1,392 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Translucent Resin — UI inspired by the Casio G-Shock GA-2100BM-7A8.
+   Two ideas carry it: (1) translucency — milky resin panels you see real
+   structure through, depth from stacked semi-transparent planes not shadows;
+   (2) the dial — one large concentric-ring "iris" surface, homepage only.
+   Near-monochrome, hard octagonal geometry. Light theme only for now.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --page:        #ededea;                     /* flat quiet ground */
+  --resin:       rgba(247, 247, 244, 0.42);   /* thin tier — the see-through bezel band */
+  --resin-read:  rgba(247, 247, 244, 0.88);   /* dense tier — behind all text */
+  --resin-flat:  rgba(246, 246, 243, 0.60);   /* @supports fallback for .resin-thin (no blur) */
+
+  --ink:         #191b1e;
+  --ink-2:       #53585f;
+  --hairline:    rgba(25, 27, 30, 0.12);
+
+  --chassis:     #5b5e63;                      /* internal structure seen through the resin */
+
+  --dial-hi:     #c9cdd2;                      /* vapor-deposited silver — a real mid-tone. */
+  --dial-lo:     #8a929c;                      /* ring modulation 1.97:1, dial-lo 2.68:1 vs --page */
+
+  --lcd-bg:      #14161a;
+  --lcd-fg:      #c4cabb;
+
+  --accent:      #a8341f;                      /* one use only: the "LIVE" status marker */
+
+  --chamfer:     14px;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-hairline: var(--hairline);
+  --color-chassis: var(--chassis);
+  --color-accent: var(--accent);
+  --color-lcd-bg: var(--lcd-bg);
+  --color-lcd-fg: var(--lcd-fg);
+
+  --font-sans: var(--font-plex-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-plex-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-condensed: var(--font-plex-condensed), "Roboto Condensed", "Arial Narrow", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --font-dseg: var(--font-dseg), var(--font-plex-mono), ui-monospace, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background-color: var(--page);
+}
+
+body {
+  min-height: 100%;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  letter-spacing: 0.003em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+main#main {
+  justify-content: safe center;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--page);
+}
+
+/* Single ink outline — every surface a focusable element sits on is light
+   (page, resin-read, nav rail), and `outline` isn't clipped by any of them. */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (forced-colors: active) {
+  :focus-visible { outline-color: Highlight; }
+}
+
+/* ---- octagon clip ----------------------------------------------------- */
+
+.octagon {
+  clip-path: polygon(
+    var(--chamfer) 0, calc(100% - var(--chamfer)) 0,
+    100% var(--chamfer), 100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%, var(--chamfer) 100%,
+    0 calc(100% - var(--chamfer)), 0 var(--chamfer)
+  );
+}
+
+/* ---- the frame: stacked translucent planes --------------------------- */
+
+.frame {
+  --chamfer: 30px;
+  position: relative;
+  display: flow-root;   /* contain the child margin without clipping */
+  width: 100%;
+}
+.resin-read { --chamfer: 20px; }
+
+/* homepage: a large dial area with the reading panel floated into one corner */
+.frame-dial {
+  display: flex;
+  min-height: 21rem;
+}
+@media (min-width: 640px) {
+  .frame-dial { min-height: 25rem; }
+}
+.frame-dial > .resin-read {
+  align-self: flex-start;
+  margin: 16px;
+  max-width: min(24rem, calc(100% - 32px));
+}
+
+/* chassis — real structure that gets blurred by a frosted plane painted after it.
+   Used inside .frame (z0) and behind the nav bar. Must be a sibling *before* the
+   frosted element, never its child (backdrop-filter samples the backdrop only). */
+.chassis {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.chassis-grid {
+  position: absolute;
+  inset: -24px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 45px, color-mix(in srgb, var(--chassis) 34%, transparent) 45px 46px),
+    repeating-linear-gradient(0deg,  transparent 0 45px, color-mix(in srgb, var(--chassis) 34%, transparent) 45px 46px);
+  /* fade out where the iris sits (top-right) so the two periodic patterns don't beat */
+  -webkit-mask-image: radial-gradient(135% 145% at 100% 0%, transparent 22%, #000 62%);
+  mask-image: radial-gradient(135% 145% at 100% 0%, transparent 22%, #000 62%);
+}
+/* the "inner case" — an offset octagon outline read through the resin */
+.chassis-case {
+  --chamfer: 13px;
+  position: absolute;
+  inset: 13px 22px 21px 13px;   /* offset up-left → reads as a part beneath the bezel */
+  clip-path: polygon(
+    var(--chamfer) 0, calc(100% - var(--chamfer)) 0,
+    100% var(--chamfer), 100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%, var(--chamfer) 100%,
+    0 calc(100% - var(--chamfer)), 0 var(--chamfer)
+  );
+  background: color-mix(in srgb, var(--chassis) 5%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--chassis) 72%, transparent);
+}
+/* centre crosshair — a real construction mark */
+.chassis-case::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(color-mix(in srgb, var(--chassis) 45%, transparent), color-mix(in srgb, var(--chassis) 45%, transparent)) center / 1px 22px no-repeat,
+    linear-gradient(color-mix(in srgb, var(--chassis) 45%, transparent), color-mix(in srgb, var(--chassis) 45%, transparent)) center / 22px 1px no-repeat;
+}
+
+/* z1 · resin-thin — the see-through bezel band. The only backdrop-filter here. */
+.resin-thin {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(152deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.1) 46%, rgba(255, 255, 255, 0) 76%),
+    rgba(247, 247, 244, 0.44);
+  -webkit-backdrop-filter: blur(4px) saturate(1.1);
+  backdrop-filter: blur(4px) saturate(1.1);
+  /* crisp edges only — no soft glow. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 0 0 1.5px rgba(25, 27, 30, 0.06);
+}
+
+/* z2 · iris — the concentric dial, homepage only, ABOVE the blur (full opacity) */
+.iris {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;   /* contain the soft-light blend to this layer */
+}
+.iris::before {   /* the dial — a partial presence, centred off the top-right corner */
+  content: "";
+  position: absolute;
+  width: 82%;
+  aspect-ratio: 1 / 1;
+  top: -46%;
+  right: -16%;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    var(--dial-hi) 0,
+    var(--dial-lo) 4px,
+    var(--dial-hi) 8px
+  );
+  /* fade the outer rings + a hair of blur — kills the far-field moiré,
+     reads as light falling off the surface */
+  -webkit-mask-image: radial-gradient(circle at center, #000 36%, transparent 66%);
+  mask-image: radial-gradient(circle at center, #000 36%, transparent 66%);
+  filter: blur(0.5px);
+}
+.iris::after {   /* iridescence — a whisper of shifting hue, not colour */
+  content: "";
+  position: absolute;
+  width: 82%;
+  aspect-ratio: 1 / 1;
+  top: -46%;
+  right: -16%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg,
+    rgba(150, 170, 184, 0.6),
+    rgba(198, 190, 176, 0.5),
+    rgba(158, 174, 180, 0.6),
+    rgba(196, 186, 180, 0.5),
+    rgba(150, 170, 184, 0.6)
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.26;
+}
+
+/* z3 · resin-read — the dial face, holds all text. No backdrop-filter. */
+.resin-read {
+  position: relative;
+  z-index: 3;
+  margin: 15px;
+  background: var(--resin-read);
+  /* crisp bezel lip — hard 1px lines, no blur. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 1px rgba(25, 27, 30, 0.05);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .resin-thin,
+  .resin-bar { background: var(--resin-flat); }
+}
+
+/* ---- /work — a grid of octagon cards -------------------------------- */
+
+.work-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .work-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* full-width bands top and bottom; the peer cards tile (equal height) between */
+  .project-card.is-lead,
+  .project-card.is-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.project-card {
+  --chamfer: 14px;
+  position: relative;
+  display: flex;
+  min-height: 8.5rem;
+}
+
+/* z0 · a cool-tinted plane; its 4px reveal past the face reads as a bezel.
+   Near-opaque + a hard outer hairline, so the card edge is crisp, not a fade.
+   No backdrop-filter — four more blurred regions would cost mobile scroll;
+   depth here is stacked planes, not blur. */
+.pc-band {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: color-mix(in srgb, var(--chassis) 15%, var(--resin-read));
+  box-shadow: inset 0 0 0 1px rgba(25, 27, 30, 0.16);
+}
+
+/* z1 · the reading face, inset so the band shows as an edge. Kept empty so the
+   body above it stays unclipped (clip-path would eat the links' focus rings). */
+.pc-face {
+  --chamfer: 11px;
+  position: absolute;
+  inset: 4px;
+  z-index: 1;
+  background: var(--resin-read);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+/* z2 · content — not clipped, so focus outlines on the links render whole */
+.pc-body {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.pc-link {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+.pc-link:hover {
+  text-decoration: underline;
+}
+/* the site's single use of the accent — the one project you can play right now */
+.pc-link--accent {
+  color: var(--accent);
+}
+
+/* ---- LCD chip — a minor detail for page labels + numerals ------------- */
+
+.lcd {
+  --chamfer: 4px;
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  background: var(--lcd-bg);
+  color: var(--lcd-fg);
+  font-family: var(--font-condensed);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+.lcd-num {
+  font-family: var(--font-dseg);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- frosted bar (nav) --------------------------------------------- */
+
+.nav-wrap {
+  position: relative;
+}
+.resin-bar {
+  --chamfer: 10px;
+  position: relative;
+  z-index: 1;
+  background: var(--resin);
+  -webkit-backdrop-filter: blur(7px) saturate(1.08);
+  backdrop-filter: blur(7px) saturate(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+/* ---- misc ----------------------------------------------------------- */
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 0.9rem;
+  background: var(--lcd-bg);
+  color: var(--lcd-fg);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  transform: translateY(-150%);
+}
+.skip-link:focus {
+  transform: none;
+}
