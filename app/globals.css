@@ -2,10 +2,10 @@
 
 /* ============================================================================
    Translucent Resin — UI inspired by the Casio G-Shock GA-2100BM-7A8.
-   Two ideas carry it: (1) translucency — milky resin panels you see real
-   structure through, depth from stacked semi-transparent planes not shadows;
-   (2) the dial — one large concentric-ring "iris" surface, homepage only.
-   Near-monochrome, hard octagonal geometry. Light theme only for now.
+   Translucency carries it: milky resin panels you see real structure through,
+   depth from stacked semi-transparent planes, not shadows. Near-monochrome,
+   hard octagonal geometry on the interior panels; the homepage is a full-bleed
+   frosted pane with the name as the one signature. Light theme only for now.
    ========================================================================== */
 
 :root {
@@ -22,13 +22,11 @@
 
   --chassis:     #5b5e63;                      /* internal structure seen through the resin */
 
-  --dial-hi:     #c9cdd2;                      /* vapor-deposited silver — a real mid-tone. */
-  --dial-lo:     #8a929c;                      /* ring modulation 1.97:1, dial-lo 2.68:1 vs --page */
-
   --lcd-bg:      #14161a;
   --lcd-fg:      #c4cabb;
 
-  --accent:      #a8341f;                      /* one use only: the "LIVE" status marker */
+  --accent:      #0369a1;                      /* the one accent (sky blue): focus rings, nav
+                                                   "here", hovers, selection, skills-map bubbles */
 
   --chamfer:     14px;
 }
@@ -48,6 +46,7 @@
   --font-condensed: var(--font-plex-condensed), "Roboto Condensed", "Arial Narrow", sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --font-dseg: var(--font-dseg), var(--font-plex-mono), ui-monospace, monospace;
+  --font-signature: var(--font-signature-mark), "Marker Felt", cursive;
 }
 
 *,
@@ -91,14 +90,14 @@ a {
 }
 
 ::selection {
-  background: var(--ink);
+  background: var(--accent);
   color: var(--page);
 }
 
-/* Single ink outline — every surface a focusable element sits on is light
+/* Single accent outline — every surface a focusable element sits on is light
    (page, resin-read, nav rail), and `outline` isn't clipped by any of them. */
 :focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 @media (forced-colors: active) {
@@ -116,6 +115,23 @@ a {
   );
 }
 
+/* ---- content pages: one shared title + shell -------------------------- */
+/* Every content page (/projects /work /about /contact) uses the same shape:
+   PageTitle at a fixed spot, no panel, no background chip. Not the homepage —
+   that's a hero moment with its own centred/lifted treatment (.home-stage). */
+
+.page-shell {
+  width: 100%;
+  margin-bottom: auto;   /* top-aligns under main's padding, same on every page */
+}
+.page-title {
+  color: var(--ink);
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
 /* ---- the frame: stacked translucent planes --------------------------- */
 
 .frame {
@@ -125,20 +141,6 @@ a {
   width: 100%;
 }
 .resin-read { --chamfer: 20px; }
-
-/* homepage: a large dial area with the reading panel floated into one corner */
-.frame-dial {
-  display: flex;
-  min-height: 21rem;
-}
-@media (min-width: 640px) {
-  .frame-dial { min-height: 25rem; }
-}
-.frame-dial > .resin-read {
-  align-self: flex-start;
-  margin: 16px;
-  max-width: min(24rem, calc(100% - 32px));
-}
 
 /* chassis — real structure that gets blurred by a frosted plane painted after it.
    Used inside .frame (z0) and behind the nav bar. Must be a sibling *before* the
@@ -156,7 +158,7 @@ a {
   background:
     repeating-linear-gradient(90deg, transparent 0 45px, color-mix(in srgb, var(--chassis) 34%, transparent) 45px 46px),
     repeating-linear-gradient(0deg,  transparent 0 45px, color-mix(in srgb, var(--chassis) 34%, transparent) 45px 46px);
-  /* fade out where the iris sits (top-right) so the two periodic patterns don't beat */
+  /* fade the grid out toward the top-right so it reads as structure, not texture */
   -webkit-mask-image: radial-gradient(135% 145% at 100% 0%, transparent 22%, #000 62%);
   mask-image: radial-gradient(135% 145% at 100% 0%, transparent 22%, #000 62%);
 }
@@ -201,56 +203,7 @@ a {
     inset 0 0 0 1.5px rgba(25, 27, 30, 0.06);
 }
 
-/* z2 · iris — the concentric dial, homepage only, ABOVE the blur (full opacity) */
-.iris {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  overflow: hidden;
-  isolation: isolate;   /* contain the soft-light blend to this layer */
-}
-.iris::before {   /* the dial — a partial presence, centred off the top-right corner */
-  content: "";
-  position: absolute;
-  width: 82%;
-  aspect-ratio: 1 / 1;
-  top: -46%;
-  right: -16%;
-  border-radius: 50%;
-  background: repeating-radial-gradient(
-    circle at center,
-    var(--dial-hi) 0,
-    var(--dial-lo) 4px,
-    var(--dial-hi) 8px
-  );
-  /* fade the outer rings + a hair of blur — kills the far-field moiré,
-     reads as light falling off the surface */
-  -webkit-mask-image: radial-gradient(circle at center, #000 36%, transparent 66%);
-  mask-image: radial-gradient(circle at center, #000 36%, transparent 66%);
-  filter: blur(0.5px);
-}
-.iris::after {   /* iridescence — a whisper of shifting hue, not colour */
-  content: "";
-  position: absolute;
-  width: 82%;
-  aspect-ratio: 1 / 1;
-  top: -46%;
-  right: -16%;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 200deg,
-    rgba(150, 170, 184, 0.6),
-    rgba(198, 190, 176, 0.5),
-    rgba(158, 174, 180, 0.6),
-    rgba(196, 186, 180, 0.5),
-    rgba(150, 170, 184, 0.6)
-  );
-  mix-blend-mode: soft-light;
-  opacity: 0.26;
-}
-
-/* z3 · resin-read — the dial face, holds all text. No backdrop-filter. */
+/* z3 · resin-read — the panel face, holds all text. No backdrop-filter. */
 .resin-read {
   position: relative;
   z-index: 3;
@@ -264,75 +217,345 @@ a {
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .resin-thin,
-  .resin-bar { background: var(--resin-flat); }
+  .resin-bar,
+  .home-frost,
+  .chip-face { background: var(--resin-flat); }
 }
 
-/* ---- /work — a grid of octagon cards -------------------------------- */
+/* ---- homepage — a full-bleed frosted pane behind the name ------------- */
 
-.work-grid {
+/* soft cool glow, upper-right — gives the frost something to blur */
+.home-atmos {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(115% 88% at 76% 10%, #c6c9cf 0%, #dcdcde 42%, var(--page) 74%);
+}
+
+/* the resin pane, page-wide — the only backdrop-filter on the homepage */
+.home-frost {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(152deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.1) 46%, rgba(255, 255, 255, 0) 78%),
+    rgba(247, 247, 244, 0.44);
+  -webkit-backdrop-filter: blur(7px) saturate(1.05);
+  backdrop-filter: blur(7px) saturate(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1.5px rgba(25, 27, 30, 0.05);
+}
+
+/* the stage — the signature centred, lifted a little so the caption clears it */
+.home-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(3rem, 9vh, 5.5rem);
+  width: 100%;
+  overflow-x: clip;                     /* the tilted signature can kiss the edges */
+  text-align: center;
+  transform: translateY(-3vh);          /* main already centres us; nudge up */
+}
+@media (max-width: 640px) {
+  .home-stage { transform: translateY(-2vh); }
+}
+@media (max-height: 700px) {
+  .home-stage { transform: none; }
+}
+
+/* the name — the site's one signature: a bold flowing script that signs itself
+   on (sign-in), tilted "lifted", then the letters repel the cursor
+   (KineticName). Confident and professional, not a delicate cursive. */
+.kinetic-name {
+  position: relative;
+  font-family: var(--font-signature);
+  font-weight: 400;
+  font-size: clamp(3rem, 13vw, 10rem);
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--ink);
+  white-space: nowrap;                  /* one flowing line */
+  padding: 0.12em 0.32em;               /* room for the tilt + descenders */
+  transform: rotate(-9deg);             /* "lifted" */
+  transform-origin: 50% 60%;
+  animation: sign-in 1150ms cubic-bezier(0.22, 0.61, 0.3, 1) both;
+}
+.kn-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.kn-ch {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* the pen crossing the page — a left-to-right reveal along the baseline. Starts
+   with the first glyph already showing so it never owns First Contentful Paint. */
+@keyframes sign-in {
+  from { clip-path: inset(-25% 92% -40% -6%); }
+  to   { clip-path: inset(-25% -6% -40% -6%); }
+}
+@media (max-width: 430px) {
+  .kinetic-name { white-space: normal; }   /* let the two words stack if tight */
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinetic-name { animation: none; }       /* show it fully, at once */
+}
+
+/* the caption under the signature */
+.home-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+}
+.home-hi {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.home-cred {
+  font-family: var(--font-mono);
+  font-size: clamp(0.72rem, 1.7vw, 0.82rem);
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+}
+
+.home-cta {
+  margin-top: 0.9rem;
+}
+
+/* ---- frosted resin chip button — home CTA, form submit, "send another" ---- */
+/* The <a>/<button> stays unclipped (clean focus ring); the inner face carries
+   the octagon + blur (same trick as the active nav link). */
+.chip-btn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.chip-btn:focus-visible {
+  border-radius: 12px;
+}
+.chip-btn[disabled] {
+  cursor: default;
+}
+.chip-face {
+  --chamfer: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-condensed);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink);
+  background: var(--resin);
+  -webkit-backdrop-filter: blur(7px) saturate(1.08);
+  backdrop-filter: blur(7px) saturate(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 0 0 0 1.5px rgba(25, 27, 30, 0.11);
+  transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease,
+    transform 180ms ease, opacity 180ms ease;
+}
+.chip-face--wide {
+  width: 100%;
+}
+.chip-btn[disabled] .chip-face {
+  opacity: 0.55;
+}
+@media (hover: hover) {
+  .chip-btn:not([disabled]):hover .chip-face {
+    background: color-mix(in srgb, var(--accent) 10%, var(--resin-read));
+    color: var(--accent);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+      inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 55%, transparent);
+    transform: translateY(-1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip-face { transition: background 180ms ease; }
+  .chip-btn:hover .chip-face { transform: none; }
+}
+
+/* ---- /projects — a grid of project buttons -------------------------- */
+/* Each card is one <a>: the project image full-bleed edge-to-edge (no frame);
+   the name + metadata sit on the image over a dark wash. Hover = a glass-shine
+   sweep + the card lifts. The whole card navigates — there are no link labels.
+   Rounded corners — border-radius, not the site octagon (Fabian's call). */
+
+.projects-grid {
   display: grid;
-  gap: 14px;
+  gap: 28px;
   grid-template-columns: 1fr;
   width: 100%;
 }
-@media (min-width: 1024px) {
-  .work-grid {
+@media (min-width: 768px) {
+  .projects-grid {
     grid-template-columns: 1fr 1fr;
-  }
-  /* full-width bands top and bottom; the peer cards tile (equal height) between */
-  .project-card.is-lead,
-  .project-card.is-wide {
-    grid-column: 1 / -1;
+    grid-auto-rows: 1fr;   /* every card the same height */
   }
 }
+.projects-grid > li { display: flex; }   /* let the <a> fill the row */
 
 .project-card {
-  --chamfer: 14px;
+  --radius: 20px;                       /* corner */
   position: relative;
   display: flex;
-  min-height: 8.5rem;
+  flex: 1;
+  min-height: 26rem;
+  color: #f4f3ef;
+  text-decoration: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: transform 220ms ease, filter 220ms ease;
+}
+@media (hover: hover) {
+  .project-card:hover {
+    transform: translateY(-5px);
+    filter: drop-shadow(0 16px 24px rgba(25, 27, 30, 0.26));
+    z-index: 1;
+  }
 }
 
-/* z0 · a cool-tinted plane; its 4px reveal past the face reads as a bezel.
-   Near-opaque + a hard outer hairline, so the card edge is crisp, not a fade.
-   No backdrop-filter — four more blurred regions would cost mobile scroll;
-   depth here is stacked planes, not blur. */
-.pc-band {
+/* z1 · the project image — full-bleed, the whole card */
+.pc-image {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: color-mix(in srgb, var(--chassis) 15%, var(--resin-read));
-  box-shadow: inset 0 0 0 1px rgba(25, 27, 30, 0.16);
-}
-
-/* z1 · the reading face, inset so the band shows as an edge. Kept empty so the
-   body above it stays unclipped (clip-path would eat the links' focus rings). */
-.pc-face {
-  --chamfer: 11px;
-  position: absolute;
-  inset: 4px;
   z-index: 1;
-  background: var(--resin-read);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--page);
+}
+.pc-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* wide vector wordmarks (Swap) can't be cropped — fit the whole mark, up top */
+.pc-image--contain img {
+  object-fit: contain;
+  object-position: center 22%;
+}
+.pc-image::after {   /* a fixed sheen so the well reads as glass at rest too */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 44%);
+}
+/* Parche has no asset — a plain black title card, the name carried by .pc-body */
+.pc-image--motif {
+  background: #121315;
 }
 
-/* z2 · content — not clipped, so focus outlines on the links render whole */
+/* z2 · dark wash — legible text directly on the image; weighted to the bottom
+   third so the top of each image stays clean */
+.pc-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: var(--radius);
+  background: linear-gradient(
+    to bottom,
+    rgba(18, 19, 21, 0) 0%,
+    rgba(18, 19, 21, 0) 30%,
+    rgba(18, 19, 21, 0.44) 47%,
+    rgba(18, 19, 21, 0.84) 64%,
+    rgba(18, 19, 21, 0.9) 100%
+  );
+}
+
+/* z3 · the text — bottom-aligned into the wash */
 .pc-body {
   position: relative;
-  z-index: 2;
-  width: 100%;
+  z-index: 3;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem 1.5rem 1.4rem;
+}
+.pc-body .pc-tagline { color: rgba(244, 243, 239, 0.86); }
+.pc-body .pc-stack   { color: rgba(244, 243, 239, 0.74); }
+/* the no-image (Parche) card has nothing but the name — centre it on the black */
+.project-card:has(.pc-image--motif) .pc-body { justify-content: center; }
+
+/* z4 · the glass-shine sweep — a light band that crosses the whole card on hover */
+.pc-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: var(--radius);
+}
+.pc-shine::before {
+  content: "";
+  position: absolute;
+  top: -25%;
+  left: -55%;
+  width: 42%;
+  height: 150%;
+  background: linear-gradient(
+    100deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 82%
+  );
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+@media (hover: hover) {
+  .project-card:hover .pc-shine::before {
+    opacity: 1;
+    transform: translateX(380%);
+    transition: transform 650ms cubic-bezier(0.33, 0, 0.2, 1), opacity 90ms ease;
+  }
 }
 
-.pc-link {
-  color: var(--ink);
-  text-underline-offset: 3px;
+/* focus ring — the accent outline on the <a>; `forced-colors` is covered by
+   the global :focus-visible rule in the base layer */
+.project-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 23px;   /* echo the card's rounded corner */
 }
-.pc-link:hover {
-  text-decoration: underline;
+
+/* motion is an enhancement only — kill the lift + sweep, keep a static cue */
+@media (prefers-reduced-motion: reduce) {
+  .project-card {
+    transition: none;
+  }
+  .project-card:hover {
+    transform: none;
+  }
+  .pc-shine {
+    display: none;
+  }
 }
-/* the site's single use of the accent — the one project you can play right now */
-.pc-link--accent {
-  color: var(--accent);
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .project-card:hover {
+    filter: drop-shadow(0 6px 14px rgba(25, 27, 30, 0.2));
+  }
 }
 
 /* ---- LCD chip — a minor detail for page labels + numerals ------------- */
@@ -361,16 +584,567 @@ a {
 .nav-wrap {
   position: relative;
 }
+/* decoration only — the frosted octagon shell. Content lives in .nav-inner,
+   which is NOT clipped so the hover labels can fly out past this edge. */
 .resin-bar {
   --chamfer: 10px;
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  pointer-events: none;
   background: var(--resin);
   -webkit-backdrop-filter: blur(7px) saturate(1.08);
   backdrop-filter: blur(7px) saturate(1.08);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
     inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+.nav-inner {
+  position: relative;
+  z-index: 2;
+}
+.nav-home {
+  display: inline-flex;
+  border-radius: 6px;
+  color: var(--ink);
+  transition: color 140ms ease;
+}
+@media (hover: hover) {
+  .nav-home:hover {
+    color: var(--accent);
+  }
+}
+.nav-home:focus-visible {
+  color: var(--accent);
+}
+
+/* nav icon buttons — icon-only; the accessible name is on aria-label, and on
+   md+ a label chip flies out on hover/focus. Active route = a pressed well
+   (border-radius, not the octagon clip — keeps the focus outline square + whole). */
+.nav-ico {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: var(--ink-2);
+  transition: color 140ms ease, background-color 140ms ease;
+}
+.nav-ico svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+@media (hover: hover) {
+  .nav-ico:hover {
+    color: var(--ink);
+    background-color: rgba(25, 27, 30, 0.05);
+  }
+}
+.nav-ico--active {
+  color: var(--accent);
+  background-color: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow:
+    inset 0 1px 2px rgba(25, 27, 30, 0.1),
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* the flyout label — an LCD chip to the right of the icon (md+ only) */
+.nav-ico-label {
+  position: absolute;
+  left: calc(100% + 9px);
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%) translateX(-4px);
+  padding: 0.32rem 0.55rem 0.28rem;
+  background: var(--lcd-bg);
+  color: var(--lcd-fg);
+  font-family: var(--font-condensed);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 130ms ease, transform 130ms ease;
+}
+@media (min-width: 768px) {
+  .nav-ico:hover .nav-ico-label,
+  .nav-ico:focus-visible .nav-ico-label {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+@media (max-width: 767px) {
+  .nav-ico-label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-ico-label { transition: opacity 130ms ease; }
+}
+
+/* ---- /contact — form + channel links ------------------------------- */
+
+.contact-intro {
+  margin-top: 2rem;
+  color: var(--ink);
+  max-width: 60ch;
+}
+
+.cform {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.cform-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cform-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.cform-input,
+.cform-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  box-shadow: inset 0 1px 2px rgba(25, 27, 30, 0.05);
+}
+.cform-textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+.cform-input::placeholder,
+.cform-textarea::placeholder {
+  color: color-mix(in srgb, var(--ink-2) 60%, transparent);
+}
+.cform-input:focus-visible,
+.cform-textarea:focus-visible {
+  border-color: var(--accent);
+}
+.cform-input[aria-invalid="true"],
+.cform-textarea[aria-invalid="true"] {
+  border-color: var(--accent);
+}
+.cform-err {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent);
+}
+.cform-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.cform-banner {
+  padding: 0.7rem 0.85rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  border-radius: 6px;
+}
+.cform-banner a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.cform-submitrow {
+  margin-top: 0.25rem;
+}
+.cform-success {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hairline);
+}
+.cform-success p {
+  max-width: 52ch;
+}
+.cform-success .chip-btn {
+  margin-top: 1.25rem;
+}
+
+.contact-links {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--hairline);
+}
+.contact-misc {
+  margin-top: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--ink-2);
+}
+.contact-misc a {
+  transition: color 140ms ease;
+}
+.contact-misc a:hover {
+  color: var(--ink);
+}
+
+/* ---- /about — headshot + prose ---------------------------------- */
+
+.about-head {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin-top: 2rem;
+}
+.about-photo {
+  --chamfer: 12px;
+  flex-shrink: 0;
+  width: 150px;
+  height: 178px;
+  background-color: color-mix(in srgb, var(--chassis) 20%, var(--page));
+  background-image: url("/headshot.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1.5px var(--hairline);
+}
+.about-name {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.about-role {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-2);
+}
+.about-prose {
+  margin-top: 1.6rem;
+  font-size: 1.05rem;
+}
+.about-prose p + p {
+  margin-top: 1rem;
+}
+@media (max-width: 560px) {
+  .about-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .about-photo {
+    width: 132px;
+    height: 156px;
+  }
+}
+
+/* ---- /about — the skills map ("StackMap.tsx") ------------------ */
+/* one bubble per technology, diameter set by tenure (--d, capped by clamp).
+   Monochrome: ink-2 ring at rest, fills ink on hover/focus/active. */
+
+.stackmap {
+  margin-top: 2.75rem;
+}
+.sk-intro {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--ink-2);
+  margin-bottom: 1.75rem;
+}
+.sk-group + .sk-group {
+  margin-top: 2rem;
+}
+.sk-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+}
+.sk-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;   /* circles rest on a common line, names align below */
+  gap: 1.35rem 1.3rem;
+}
+.sk-bub-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  animation: sk-pop 420ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: var(--sk-delay, 0ms);
+  transition: opacity 160ms ease;
+}
+@keyframes sk-pop {
+  from { opacity: 0; transform: scale(0.72); }
+  to   { opacity: 1; transform: none; }
+}
+.sk-bub {
+  display: grid;
+  place-items: center;
+  width: var(--d, 3rem);
+  height: var(--d, 3rem);
+  border-radius: 50%;
+  /* a resin-glass chip: the same sheen recipe as .chip-face/.resin-thin, ringed
+     in a colour that shades from ink-2 (new) to the accent (held longest) */
+  background:
+    linear-gradient(152deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.06) 55%, transparent 80%),
+    rgba(247, 247, 244, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1.5px var(--ring, var(--ink-2));
+  filter: drop-shadow(0 3px 8px rgba(25, 27, 30, 0.08));
+  transition: background-color 200ms ease, box-shadow 200ms ease;
+}
+.sk-dur {
+  font-family: var(--font-mono);
+  font-size: clamp(0.64rem, calc(var(--d, 3rem) * 0.2), 1.05rem);
+  letter-spacing: 0.01em;
+  color: var(--ring, var(--ink-2));
+  transition: color 200ms ease;
+}
+.sk-name {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--ink-2);
+  transition: color 160ms ease;
+}
+.sk-bub-wrap:hover .sk-bub,
+.sk-bub-wrap:focus-visible .sk-bub,
+.sk-bub-wrap[data-active="true"] .sk-bub {
+  background:
+    linear-gradient(152deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
+    var(--accent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 0 0 1.5px var(--accent);
+}
+.sk-bub-wrap:hover .sk-dur,
+.sk-bub-wrap:focus-visible .sk-dur,
+.sk-bub-wrap[data-active="true"] .sk-dur {
+  color: var(--page);
+}
+.sk-bub-wrap:hover .sk-name,
+.sk-bub-wrap:focus-visible .sk-name,
+.sk-bub-wrap[data-active="true"] .sk-name {
+  color: var(--accent);
+}
+.stackmap[data-hovering="true"] .sk-bub-wrap:not(:hover):not([data-active="true"]) {
+  opacity: 0.4;
+}
+.sk-detail {
+  margin-top: 2rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  min-height: 2.8rem;
+}
+.sk-detail strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk-bub-wrap {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .sk-bub {
+    width: calc(var(--d, 3rem) * 0.84);
+    height: calc(var(--d, 3rem) * 0.84);
+  }
+  .sk-dur {
+    font-size: clamp(0.6rem, calc(var(--d, 3rem) * 0.17), 0.9rem);
+  }
+  .sk-cluster {
+    gap: 1.1rem 1rem;
+  }
+}
+
+/* ---- /work — expandable experience cards --------------------- */
+
+.xpc {
+  --chamfer: 14px;
+  background: var(--resin-read);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1.5px var(--hairline);
+  transition: transform 160ms ease;
+}
+.xpc + .xpc {
+  margin-top: 1rem;
+}
+@media (hover: hover) {
+  .xpc:hover {
+    transform: translateY(-1px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xpc {
+    transition: none;
+  }
+  .xpc:hover {
+    transform: none;
+  }
+}
+.xpc-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 1.25rem;
+  align-items: start;
+  width: 100%;
+  padding: 2rem 2.25rem;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.xpc-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+@media (hover: hover) {
+  .xpc-head:hover {
+    background-color: rgba(25, 27, 30, 0.03);
+  }
+}
+.xpc-company {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: clamp(1.9rem, 5.5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+.xpc-line {
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-2);
+}
+.xpc-toggle {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: start;
+  width: 2rem;
+  height: 2rem;
+  margin-top: 0.3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--hairline);
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--ink-2);
+  transition: transform 260ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+.xpc[data-open="true"] .xpc-toggle {
+  transform: rotate(45deg);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.xpc-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease;
+}
+.xpc[data-open="true"] .xpc-body {
+  grid-template-rows: 1fr;
+}
+.xpc-body-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.xpc-body-pad {
+  padding: 0.5rem 2.25rem 2rem;
+}
+.xpc-summary {
+  color: var(--ink);
+  font-size: 1.05rem;
+  max-width: 60ch;
+}
+.xpc-points {
+  margin-top: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  list-style: none;
+  padding: 0;
+}
+.xpc-points li {
+  position: relative;
+  padding-left: 1.1rem;
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+.xpc-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+.xpc-stack {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+}
+.xpc-stack li {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-2);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .xpc-body {
+    transition: none;
+  }
+  .xpc-toggle {
+    transition: color 150ms ease;
+  }
 }
 
 /* ---- misc ----------------------------------------------------------- */

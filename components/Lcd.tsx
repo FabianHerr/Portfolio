@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** Dark LCD chip — used for page labels and metadata. */
+/** Dark LCD chip, used for page labels and metadata. */
 export function Lcd({
   children,
   as: Tag = "span",

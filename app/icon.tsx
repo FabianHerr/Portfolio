@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
-// Octagonal chip with an "F" — echoes the CasiOak bezel. Placeholder mark.
+// "FH" in a machined octagon, mirrors components/Monogram.tsx (the nav mark).
 export default function Icon() {
   return new ImageResponse(
     (
@@ -14,27 +14,26 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background:
-            "linear-gradient(152deg, #edeef0, #b6bbc1 40%, #a7acb3 70%, #cfd2d6)",
+          background: "#ededea",
         }}
       >
         <div
           style={{
-            width: 46,
-            height: 46,
+            width: 50,
+            height: 50,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#14161a",
-            color: "#c4cabb",
-            fontSize: 30,
+            background: "#191b1e",
+            color: "#ededea",
+            fontSize: 25,
             fontWeight: 700,
-            fontFamily: "Georgia, serif",
+            letterSpacing: 1,
             clipPath:
-              "polygon(28% 0, 72% 0, 100% 28%, 100% 72%, 72% 100%, 28% 100%, 0 72%, 0 28%)",
+              "polygon(24% 0, 76% 0, 100% 24%, 100% 76%, 76% 100%, 24% 100%, 0 76%, 0 24%)",
           }}
         >
-          F
+          FH
         </div>
       </div>
     ),

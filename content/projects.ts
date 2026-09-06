@@ -1,5 +1,5 @@
 /**
- * Selected work — a minimal index. Version-controlled, no CMS (CLAUDE.md §0).
+ * Selected work, a minimal index. Version-controlled, no CMS (CLAUDE.md §0).
  * Order: game first (Fabian's call).
  */
 export type ProjectLink = { label: string; href: string };
@@ -10,14 +10,17 @@ export type Project = {
   tagline: string;
   stack: string[];
   links: ProjectLink[];
+  /** full-bleed card background in /public/projects; omit to get the CSS blueprint field */
+  image?: string;
 };
 
 export const projects: Project[] = [
   {
-    name: "LogBait",
+    name: "Yamaz",
     tagline: "A browser-playable 2.5D action-roguelike.",
     stack: ["Game", "HTML5"],
     links: [{ label: "Play", href: "https://fabianherr.itch.io/yamaz" }],
+    image: "/projects/yamaz.jpg",
   },
   {
     name: "Parche",
@@ -28,11 +31,10 @@ export const projects: Project[] = [
   {
     name: "Swap",
     tagline:
-      "A peer-to-peer app for swapping foreign cash locally — in progress, with a teammate.",
+      "A peer-to-peer app for swapping foreign cash locally. In progress, with a teammate.",
     stack: ["React", "Node / Express", "MongoDB", "Firebase"],
-    links: [
-      { label: "Source", href: "https://github.com/FabianHerr/Swap/tree/Fabian" },
-    ],
+    links: [{ label: "Source", href: "https://github.com/FabianHerr/Swap" }],
+    image: "/projects/swap.svg",
   },
   {
     name: "Allô",
@@ -42,5 +44,6 @@ export const projects: Project[] = [
       { label: "Live", href: "https://alloagency.ca" },
       { label: "Source", href: "https://github.com/FabianHerr/allo_website" },
     ],
+    image: "/projects/allo.jpg",
   },
 ];

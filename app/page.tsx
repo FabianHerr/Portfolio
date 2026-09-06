@@ -1,15 +1,24 @@
+import Link from "next/link";
 import { profile } from "@/content/profile";
-import { Frame } from "@/components/Frame";
+import { KineticName } from "@/components/KineticName";
 
 export default function Home() {
   return (
-    <Frame iris className="max-w-[44rem]">
-      <h1 className="font-sans text-[clamp(2rem,6vw,3.25rem)] font-semibold leading-[1.04] tracking-[-0.022em]">
-        {profile.name}
-      </h1>
-      <p className="mt-5 text-[1.1875rem] leading-[1.5] text-ink-2">
-        {profile.tagline}
-      </p>
-    </Frame>
+    <>
+      <div className="home-atmos" aria-hidden="true" />
+      <div className="home-frost" aria-hidden="true" />
+
+      <div className="home-stage">
+        <KineticName name={profile.name} />
+
+        <div className="home-caption">
+          <p className="home-hi">{profile.homeIntro}</p>
+          <p className="home-cred">{profile.homeCredential}</p>
+          <Link href="/contact" className="chip-btn home-cta">
+            <span className="chip-face octagon">Contact me</span>
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }
