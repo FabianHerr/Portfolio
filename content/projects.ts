@@ -18,7 +18,7 @@ export const projects: Project[] = [
   {
     name: "Yamaz",
     tagline: "A browser-playable 2.5D action-roguelike.",
-    stack: ["Game", "HTML5"],
+    stack: ["Unity", "C#"],
     links: [{ label: "Play", href: "https://fabianherr.itch.io/yamaz" }],
     image: "/projects/yamaz.jpg",
   },
@@ -31,8 +31,8 @@ export const projects: Project[] = [
   {
     name: "Swap",
     tagline:
-      "A peer-to-peer app for swapping foreign cash locally. In progress, with a teammate.",
-    stack: ["React", "Node / Express", "MongoDB", "Firebase"],
+      "A peer-to-peer app for trading leftover foreign cash in person.",
+    stack: ["React", "Node / Express", "MongoDB", "JWT", "Gemini API"],
     links: [
       { label: "Live", href: "https://swap-kappa-eight.vercel.app" },
       { label: "Source", href: "https://github.com/FabianHerr/Swap" },

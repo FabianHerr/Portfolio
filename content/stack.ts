@@ -41,6 +41,8 @@ export const stack: Tool[] = [
   { name: "Next.js", group: "Frameworks", since: "2025-08", where: ["Parche", "this site"] },
   { name: "Node · Express", group: "Frameworks", since: "2025-07", where: ["Swap"] },
   { name: "MongoDB", group: "Frameworks", since: "2025-07", where: ["Swap"] },
+  { name: "Tailwind", group: "Frameworks", since: "2025-08", where: ["Swap", "Parche", "this site"] },
+  { name: "Unity", group: "Frameworks", since: "2026-01", where: ["Yamaz"] },
 
   // Data & ML
   { name: "Pandas · NumPy", group: "Data & ML", since: "2023-08", where: ["Dawson price model", "work"] },
@@ -50,6 +52,7 @@ export const stack: Tool[] = [
   // Ship & run
   { name: "Git", group: "Ship & run", since: "2024-01", where: ["everything"] },
   { name: "Vercel", group: "Ship & run", since: "2025-07", where: ["Parche", "Allô", "this site", "work"] },
+  { name: "Supabase", group: "Ship & run", since: "2025-08", where: ["Parche", "work"] },
   { name: "Power BI", group: "Ship & run", since: "2026-01", where: ["work"] },
   { name: "Azure DevOps", group: "Ship & run", since: "2026-01", where: ["work"] },
 ];
