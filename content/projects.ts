@@ -33,7 +33,10 @@ export const projects: Project[] = [
     tagline:
       "A peer-to-peer app for swapping foreign cash locally. In progress, with a teammate.",
     stack: ["React", "Node / Express", "MongoDB", "Firebase"],
-    links: [{ label: "Source", href: "https://github.com/FabianHerr/Swap" }],
+    links: [
+      { label: "Live", href: "https://swap-kappa-eight.vercel.app" },
+      { label: "Source", href: "https://github.com/FabianHerr/Swap" },
+    ],
     image: "/projects/swap.svg",
   },
   {
