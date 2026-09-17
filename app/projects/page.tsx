@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ProjectsPage() {
   return (
-    <div className="page-shell max-w-[78rem]">
+    <div className="page-shell max-w-[min(92vw,120rem)]">
       <PageTitle>Portfolio</PageTitle>
 
       <ul className="projects-grid mt-8">

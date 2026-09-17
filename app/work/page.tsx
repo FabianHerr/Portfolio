@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <div className="page-shell max-w-[46rem]">
+    <div className="page-shell max-w-[min(92vw,120rem)]">
       <PageTitle>Work</PageTitle>
       <div className="mt-8">
         {experience.map((e) => (

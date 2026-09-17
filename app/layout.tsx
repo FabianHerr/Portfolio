@@ -77,7 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Nav />
         <main
           id="main"
-          className="flex flex-1 flex-col items-center px-4 py-8 sm:py-12 md:min-w-0"
+          className="flex flex-1 flex-col items-start px-4 py-8 sm:py-12 md:min-w-0"
         >
           {children}
         </main>

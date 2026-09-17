@@ -31,46 +31,62 @@ const LinkedInIcon = () => (
 
 export default function ContactPage() {
   return (
-    <div className="page-shell max-w-[46rem]">
+    <div className="page-shell max-w-[min(92vw,120rem)]">
       <PageTitle>Contact</PageTitle>
 
-      <p className="contact-intro">
-        The form goes straight to my inbox. Whether it&rsquo;s about a role, the
-        work, or something you&rsquo;d do differently, I&rsquo;ll write back.
-      </p>
+      <div className="contact-grid">
+        <div className="contact-primary octagon">
+          <p className="contact-intro">
+            The form goes straight to my inbox. Whether it&rsquo;s about a
+            role, the work, or something you&rsquo;d do differently,
+            I&rsquo;ll write back.
+          </p>
+          <ContactForm />
+        </div>
 
-      <ContactForm />
+        <aside className="contact-aside octagon" aria-label="Other ways to reach me">
+          <p className="contact-aside-label">Or, directly</p>
 
-      <div className="contact-links">
-        <a
-          className="nav-ico p-2"
-          href={`mailto:${profile.email}`}
-          aria-label={`Email ${profile.email}`}
-        >
-          <MailIcon />
-        </a>
-        <a
-          className="nav-ico p-2"
-          href={profile.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn profile"
-        >
-          <LinkedInIcon />
-        </a>
+          <div className="contact-aside-icons">
+            <a
+              className="nav-ico p-2"
+              href={`mailto:${profile.email}`}
+              aria-label={`Email ${profile.email}`}
+            >
+              <MailIcon />
+            </a>
+            <a
+              className="nav-ico p-2"
+              href={profile.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn profile"
+            >
+              <LinkedInIcon />
+            </a>
+          </div>
+
+          <a className="contact-aside-link" href={`mailto:${profile.email}`}>
+            {profile.email}
+          </a>
+          <a
+            className="contact-aside-link"
+            href={profile.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub ↗
+          </a>
+          <a
+            className="contact-aside-link"
+            href={profile.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Résumé (PDF) ↗
+          </a>
+        </aside>
       </div>
-
-      <p className="contact-misc">
-        <a href={`mailto:${profile.email}`}>{profile.email}</a>
-        {"  ·  "}
-        <a href={profile.github} target="_blank" rel="noopener noreferrer">
-          GitHub ↗
-        </a>
-        {"  ·  "}
-        <a href={profile.resume} target="_blank" rel="noopener noreferrer">
-          Résumé (PDF) ↗
-        </a>
-      </p>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Lcd } from "@/components/Lcd";
 
 export default function NotFound() {
   return (
-    <Frame className="max-w-[26rem]">
+    <Frame className="mx-auto max-w-[26rem]">
       <Lcd as="h1">Err 404</Lcd>
       <p className="mt-5 font-display text-2xl">This page doesn’t exist.</p>
       <Link
