@@ -61,11 +61,13 @@ export function ExperienceCard({
                 <li key={i}>{point}</li>
               ))}
             </ul>
-            <ul className="xpc-stack">
-              {entry.stack.map((s) => (
-                <li key={s}>{s}</li>
-              ))}
-            </ul>
+            {entry.stack.length > 0 ? (
+              <ul className="xpc-stack">
+                {entry.stack.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ export const experience: Experience[] = [
       "Onboard customers from Shopify connection to their first clean order, and turn repeat questions into help articles.",
       "Ship fixes and features on the pipeline, integrations and app interface, including fixes for tickets I diagnosed.",
     ],
-    stack: ["Python", "TypeScript", "LLM APIs", "Shopify", "Odoo"],
+    stack: [],
   },
   {
     company: "Transport Laberge",
