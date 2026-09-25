@@ -26,6 +26,17 @@ export function ExperienceCard({
         aria-controls={bodyId}
         onClick={() => setOpen((o) => !o)}
       >
+        {entry.logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className="xpc-logo"
+            src={entry.logo}
+            alt=""
+            width={200}
+            height={200}
+            decoding="async"
+          />
+        ) : null}
         <span className="xpc-company">{entry.company}</span>
         <span className="xpc-line">
           {entry.role} &middot; {entry.period} &middot; {entry.location}

@@ -6,7 +6,7 @@ import { ExperienceCard } from "@/components/ExperienceCard";
 export const metadata: Metadata = {
   title: "Work",
   description:
-    "Fabian Herrera's work experience: a data engineering internship at Transport Laberge.",
+    "Fabian Herrera's work experience: a software engineering internship at LevelOps and a data engineering internship at Transport Laberge.",
 };
 
 export default function WorkPage() {

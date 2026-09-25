@@ -1160,6 +1160,53 @@ a {
     background-color: rgba(25, 27, 30, 0.03);
   }
 }
+.xpc-head:has(.xpc-logo) {
+  grid-template-columns: auto 1fr auto;
+}
+.xpc-logo {
+  grid-row: 1 / 3;
+  align-self: center;
+  width: clamp(3.25rem, 5vw, 4.5rem);
+  height: auto;
+  aspect-ratio: 1;
+  min-width: 3.25rem;
+  margin-right: clamp(1rem, 1.8vw, 1.5rem);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--hairline);
+}
+.xpc-head:has(.xpc-logo) .xpc-company,
+.xpc-head:has(.xpc-logo) .xpc-line {
+  grid-column: 2;
+}
+.xpc-head:has(.xpc-logo) .xpc-toggle {
+  grid-column: 3;
+}
+/* narrow screens: the logo takes its own row so the name and meta keep the full width */
+@media (max-width: 639px) {
+  .xpc-head:has(.xpc-logo) {
+    grid-template-columns: 1fr auto;
+  }
+  .xpc-logo {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: start;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    margin: 0 0 1rem;
+  }
+  .xpc-head:has(.xpc-logo) .xpc-company {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .xpc-head:has(.xpc-logo) .xpc-line {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .xpc-head:has(.xpc-logo) .xpc-toggle {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
 .xpc-company {
   grid-column: 1;
   grid-row: 1;

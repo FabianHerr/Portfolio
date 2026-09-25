@@ -1,6 +1,6 @@
 /**
  * Professional experience, shown on /work as expandable cards.
- * DRAFT copy from the CV (CV_SWE_Fabian_Herrera.pdf), for Fabian to voice.
+ * DRAFT copy from the CV (Fabian_Herrera_swe.pdf), for Fabian to voice.
  * Version-controlled, no CMS (CLAUDE.md §0). Newest first.
  */
 export type Experience = {
@@ -8,6 +8,8 @@ export type Experience = {
   role: string;
   period: string;
   location: string;
+  /** square company mark in /public/experience, shown beside the company name */
+  logo?: string;
   /** one line, first person, shown when the card is expanded */
   summary: string;
   /** 3 to 4 tight bullets: what, how, measurable result */
@@ -17,10 +19,26 @@ export type Experience = {
 
 export const experience: Experience[] = [
   {
+    company: "LevelOps",
+    role: "Software Engineer Intern",
+    period: "Sep–Dec 2026",
+    location: "Montréal, QC",
+    logo: "/experience/levelops.jpg",
+    summary:
+      "Support and product work on PDF to Order, a Shopify app that turns emailed purchase orders into draft orders.",
+    points: [
+      "Own the support queue: trace failing orders through logs, the extraction pipeline and integrations to the root cause.",
+      "Onboard customers from Shopify connection to their first clean order, and turn repeat questions into help articles.",
+      "Ship fixes and features on the pipeline, integrations and app interface, including fixes for tickets I diagnosed.",
+    ],
+    stack: ["Python", "TypeScript", "LLM APIs", "Shopify", "Odoo"],
+  },
+  {
     company: "Transport Laberge",
     role: "Data Engineering & Analytics Intern",
     period: "Jan–Jun 2026",
     location: "Montréal, QC",
+    logo: "/experience/laberge.jpg",
     summary:
       "I worked on the data platform Transport Laberge's operations and ML teams relied on.",
     points: [
