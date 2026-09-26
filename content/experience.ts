@@ -1,6 +1,6 @@
 /**
  * Professional experience, shown on /work as expandable cards.
- * DRAFT copy from the CV (Fabian_Herrera_swe.pdf), for Fabian to voice.
+ * DRAFT copy from the CV (Fabian_Herrera_Resume.pdf), for Fabian to voice.
  * Version-controlled, no CMS (CLAUDE.md §0). Newest first.
  */
 export type Experience = {
